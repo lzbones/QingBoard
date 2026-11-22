@@ -48,9 +48,9 @@ def load_slots():
         except Exception as e:
             print(f"Warning: Failed to load {DATA_FILE}: {e}")
     
-    # Default 8 slots
+    # Default 12 slots
     default_slots = []
-    for i in range(8):
+    for i in range(12):
         default_slots.append({"id": i, "type": "empty", "content": "", "filename": ""})
     return default_slots
 
@@ -98,7 +98,7 @@ async def get_board():
 async def upload_text(slot_id: int, content: str = Form(...)):
     if len(content) > 2 * 1024 * 1024:  # 2MB Limit
         raise HTTPException(status_code=413, detail="Text payload too large. Maximum size is 2MB.")
-    if slot_id < 0 or slot_id > 7:
+    if slot_id < 0 or slot_id > 11:
         raise HTTPException(status_code=400, detail="Invalid slot")
     
     async with slots_lock:
@@ -112,7 +112,7 @@ MAX_FILE_SIZE = 100 * 1024 * 1024  # 100MB limit
 
 @app.post("/api/board/{slot_id}/file")
 async def upload_file(slot_id: int, request: Request, file: UploadFile = File(...)):
-    if slot_id < 0 or slot_id > 7:
+    if slot_id < 0 or slot_id > 11:
         raise HTTPException(status_code=400, detail="Invalid slot")
     
     # Pre-check Content-Length for size limit if the client provides it
@@ -157,7 +157,7 @@ async def upload_file(slot_id: int, request: Request, file: UploadFile = File(..
 @app.delete("/api/board")
 async def clear_all_slots():
     async with slots_lock:
-        for i in range(8):
+        for i in range(12):
             cleanup_slot_file(i)
             slots[i] = {"id": i, "type": "empty", "content": "", "filename": ""}
         await save_slots()
@@ -165,7 +165,7 @@ async def clear_all_slots():
 
 @app.delete("/api/board/{slot_id}")
 async def delete_slot(slot_id: int):
-    if slot_id < 0 or slot_id > 7:
+    if slot_id < 0 or slot_id > 11:
         raise HTTPException(status_code=400, detail="Invalid slot")
         
     async with slots_lock:

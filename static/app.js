@@ -14,7 +14,7 @@ function init() {
 
 function renderSlots() {
     container.innerHTML = '';
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 12; i++) {
         const slotEl = document.createElement('div');
         slotEl.className = 'slot-card';
         slotEl.tabIndex = 0; // Focusable for keyboard
